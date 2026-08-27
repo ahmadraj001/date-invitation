@@ -7,6 +7,10 @@ const yesBtn = document.getElementById("yesBtn");
 const success = document.getElementById("success");
 const closeBtn = document.getElementById("closeBtn");
 const hint = document.getElementById("hint");
+const confirmBtn = document.getElementById("confirmBtn");
+const dateInput = document.getElementById("dateInput");
+const timeInput = document.getElementById("timeInput");
+const formMessage = document.getElementById("formMessage");
 
 let escaped = 0;
 let isMoving = false;
@@ -114,19 +118,121 @@ yesBtn.addEventListener("click", function () {
 
     createBurst();
 
+    // Set minimum date to today
+    const today = new Date();
+
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+
+    const todayString = `${year}-${month}-${day}`;
+
+    dateInput.min = todayString;
+
 });
 
 
 /* =========================
-   CLOSE POPUP
+   CONFIRM DATE + TIME
 ========================= */
 
-closeBtn.addEventListener("click", function () {
+confirmBtn.addEventListener("click", async function () {
 
-    success.classList.remove("show");
+    const selectedDate = dateInput.value;
+    const selectedTime = timeInput.value;
+
+    // Validation
+    if (!selectedDate) {
+
+        formMessage.textContent = "Please choose a date ❤️";
+        formMessage.className = "form-message error";
+
+        return;
+    }
+
+    if (!selectedTime) {
+
+        formMessage.textContent = "Please choose a time 🕐";
+        formMessage.className = "form-message error";
+
+        return;
+    }
+
+
+    // Button loading state
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = "Saving... 💕";
+
+    formMessage.textContent = "";
+
+
+    // Get visitor timezone
+    const timezone =
+        Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+
+    const data = {
+
+        answer: "YES",
+
+        date: selectedDate,
+
+        time: selectedTime,
+
+        timezone: timezone
+
+    };
+
+
+    try {
+
+        await fetch(GOOGLE_SCRIPT_URL, {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "text/plain;charset=utf-8"
+            },
+
+            body: JSON.stringify(data)
+
+        });
+
+
+        // Success
+        formMessage.textContent =
+            "It's a date! 💖 See you then! ✨";
+
+        formMessage.className = "form-message success";
+
+
+        confirmBtn.textContent = "Confirmed ❤️";
+
+
+        // Close popup after 2.5 seconds
+        setTimeout(() => {
+
+            success.classList.remove("show");
+
+        }, 2500);
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        formMessage.textContent =
+            "Something went wrong. Please try again.";
+
+        formMessage.className = "form-message error";
+
+        confirmBtn.disabled = false;
+
+        confirmBtn.textContent = "Confirm Date 💕";
+
+    }
 
 });
-
 
 /* =========================
    FLOATING HEARTS
