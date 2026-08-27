@@ -1,0 +1,407 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    background:
+        radial-gradient(circle at 20% 20%, rgba(255, 150, 190, 0.35), transparent 30%),
+        radial-gradient(circle at 80% 80%, rgba(255, 100, 160, 0.25), transparent 30%),
+        linear-gradient(135deg, #3b1025, #6d173c, #321021);
+
+    position: relative;
+}
+
+
+/* =========================
+   FLOATING HEARTS
+========================= */
+
+.hearts {
+    position: fixed;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    pointer-events: none;
+    overflow: hidden;
+
+    z-index: 1;
+}
+
+.heart {
+    position: absolute;
+    bottom: -50px;
+
+    color: rgba(255, 190, 215, 0.75);
+
+    pointer-events: none;
+
+    animation: floatHeart linear forwards;
+}
+
+@keyframes floatHeart {
+
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-115vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+
+/* =========================
+   MAIN CARD
+========================= */
+
+.card {
+    position: relative;
+
+    width: min(90%, 620px);
+
+    padding: 55px 40px;
+
+    text-align: center;
+
+    background: rgba(255, 255, 255, 0.12);
+
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    border-radius: 30px;
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.3);
+
+    z-index: 5;
+}
+
+
+/* =========================
+   HEART ICON
+========================= */
+
+.heart-icon {
+    font-size: 55px;
+
+    margin-bottom: 18px;
+
+    animation: heartbeat 1.5s infinite;
+}
+
+@keyframes heartbeat {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+}
+
+
+/* =========================
+   TEXT
+========================= */
+
+.small-text {
+    color: #ffd6e5;
+
+    font-size: 15px;
+
+    margin-bottom: 14px;
+}
+
+h1 {
+    color: white;
+
+    font-size: clamp(30px, 5vw, 48px);
+
+    line-height: 1.15;
+
+    margin-bottom: 18px;
+}
+
+.message {
+    color: #ffe6ef;
+
+    font-size: 17px;
+
+    line-height: 1.6;
+
+    margin-bottom: 35px;
+}
+
+
+/* =========================
+   BUTTONS
+========================= */
+
+.buttons {
+    position: relative;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 18px;
+
+    min-height: 60px;
+}
+
+.btn {
+    border: none;
+
+    padding: 15px 30px;
+
+    border-radius: 50px;
+
+    font-size: 17px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.yes-btn {
+    background: #ff4f91;
+
+    color: white;
+
+    box-shadow: 0 8px 25px rgba(255, 79, 145, 0.35);
+
+    z-index: 10;
+}
+
+.yes-btn:hover {
+    transform: scale(1.08);
+
+    box-shadow:
+        0 12px 35px rgba(255, 79, 145, 0.5);
+}
+
+
+/* NO BUTTON */
+
+.no-btn {
+    background: white;
+
+    color: #c42d65;
+
+    position: relative;
+
+    z-index: 9999;
+
+    transition:
+        left 0.15s ease,
+        top 0.15s ease,
+        transform 0.15s ease;
+}
+
+.no-btn:hover {
+    transform: scale(1.02);
+}
+
+
+/* =========================
+   HINT
+========================= */
+
+.hint {
+    margin-top: 25px;
+
+    min-height: 22px;
+
+    color: #ffd8e6;
+
+    font-size: 14px;
+}
+
+
+/* =========================
+   SUCCESS POPUP
+========================= */
+
+.success-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(25, 5, 15, 0.7);
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity 0.35s ease,
+        visibility 0.35s ease;
+
+    z-index: 50000;
+}
+
+.success-overlay.show {
+    opacity: 1;
+
+    visibility: visible;
+}
+
+.success-box {
+    width: min(90%, 430px);
+
+    padding: 45px 30px;
+
+    text-align: center;
+
+    background: #fff;
+
+    border-radius: 28px;
+
+    box-shadow:
+        0 25px 80px rgba(0, 0, 0, 0.35);
+
+    transform: scale(0.7);
+
+    transition: transform 0.4s cubic-bezier(.22, 1, .36, 1);
+}
+
+.success-overlay.show .success-box {
+    transform: scale(1);
+}
+
+.big-heart {
+    font-size: 65px;
+
+    margin-bottom: 10px;
+
+    animation: heartbeat 1.2s infinite;
+}
+
+.success-box h2 {
+    color: #d62f6c;
+
+    font-size: 38px;
+
+    margin-bottom: 12px;
+}
+
+.success-box p {
+    color: #555;
+
+    font-size: 18px;
+
+    margin-bottom: 10px;
+}
+
+.success-box .date-message {
+    color: #888;
+
+    font-size: 15px;
+
+    margin-top: 15px;
+
+    margin-bottom: 25px;
+}
+
+.close-btn {
+    border: none;
+
+    background: #ff4f91;
+
+    color: white;
+
+    padding: 13px 28px;
+
+    border-radius: 50px;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    transform: scale(1.05);
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 20px;
+    }
+
+    .card {
+        width: 100%;
+
+        padding: 40px 22px;
+
+        border-radius: 25px;
+    }
+
+    .heart-icon {
+        font-size: 45px;
+    }
+
+    h1 {
+        font-size: 31px;
+    }
+
+    .message {
+        font-size: 15px;
+
+        margin-bottom: 28px;
+    }
+
+    .buttons {
+        gap: 12px;
+    }
+
+    .btn {
+        padding: 13px 24px;
+
+        font-size: 15px;
+    }
+}
