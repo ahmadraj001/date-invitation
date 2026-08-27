@@ -45,30 +45,46 @@
     </main>
 
 
-    <!-- Success Popup -->
-    <div id="success" class="success-overlay">
+  <!-- Date Selection Popup -->
+<div id="success" class="success-overlay">
 
-        <div class="success-box">
+    <div class="success-box">
 
-            <div class="big-heart">💖</div>
+        <div class="big-heart">💖</div>
 
-            <h2>Yay! 🥰</h2>
+        <h2>Yay! 🥰</h2>
 
-            <p>
-                I knew you'd say yes! ❤️
-            </p>
+        <p>I knew you'd say yes! ❤️</p>
 
-            <p class="date-message">
-                Our date is officially happening! ✨
-            </p>
+        <p class="date-message">
+            Now choose when we should make it happen! ✨
+        </p>
 
-            <button id="closeBtn" class="close-btn">
-                Okay 💕
+        <div class="date-form">
+
+            <label for="dateInput">
+                📅 Pick a Date
+            </label>
+
+            <input type="date" id="dateInput">
+
+            <label for="timeInput">
+                🕐 Pick a Time
+            </label>
+
+            <input type="time" id="timeInput">
+
+            <button id="confirmBtn" class="close-btn">
+                Confirm Date 💕
             </button>
+
+            <p id="formMessage" class="form-message"></p>
 
         </div>
 
     </div>
+
+</div>
 
 
     <script src="script.js"></script>
