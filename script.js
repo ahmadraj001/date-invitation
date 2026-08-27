@@ -136,101 +136,73 @@ yesBtn.addEventListener("click", function () {
    CONFIRM DATE + TIME
 ========================= */
 
-confirmBtn.addEventListener("click", async function () {
+confirmBtn.addEventListener("click", function () {
 
     const selectedDate = dateInput.value;
     const selectedTime = timeInput.value;
 
-    // Validation
     if (!selectedDate) {
-
         formMessage.textContent = "Please choose a date ❤️";
         formMessage.className = "form-message error";
-
         return;
     }
 
     if (!selectedTime) {
-
         formMessage.textContent = "Please choose a time 🕐";
         formMessage.className = "form-message error";
-
         return;
     }
 
-
-    // Button loading state
     confirmBtn.disabled = true;
     confirmBtn.textContent = "Saving... 💕";
 
-    formMessage.textContent = "";
-
-
-    // Get visitor timezone
     const timezone =
         Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-
     const data = {
-
         answer: "YES",
-
         date: selectedDate,
-
         time: selectedTime,
-
         timezone: timezone
-
     };
 
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify(data)
+    })
+    .then(() => {
 
-    try {
-
-        await fetch(GOOGLE_SCRIPT_URL, {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "text/plain;charset=utf-8"
-            },
-
-            body: JSON.stringify(data)
-
-        });
-
-
-        // Success
         formMessage.textContent =
             "It's a date! 💖 See you then! ✨";
 
-        formMessage.className = "form-message success";
+        formMessage.className =
+            "form-message success";
 
+        confirmBtn.textContent =
+            "Confirmed ❤️";
 
-        confirmBtn.textContent = "Confirmed ❤️";
-
-
-        // Close popup after 2.5 seconds
         setTimeout(() => {
-
             success.classList.remove("show");
-
         }, 2500);
 
-
-    } catch (error) {
+    })
+    .catch((error) => {
 
         console.error(error);
 
         formMessage.textContent =
             "Something went wrong. Please try again.";
 
-        formMessage.className = "form-message error";
+        formMessage.className =
+            "form-message error";
 
         confirmBtn.disabled = false;
 
-        confirmBtn.textContent = "Confirm Date 💕";
+        confirmBtn.textContent =
+            "Confirm Date 💕";
 
-    }
+    });
 
 });
 
