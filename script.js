@@ -1,5 +1,6 @@
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzl6ye9P7CvKDun34QXYvk55hIaMwGKTG6aK55BFBvBFejOVsaLPZEgP35NPGGhHXIcQw/exec";
 
+
 const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
 const success = document.getElementById("success");
@@ -25,114 +26,286 @@ function moveNoButton() {
 
     const padding = 25;
 
-    // Fixed position
+    /*
+       Fixed position
+    */
+
     noBtn.style.position = "fixed";
     noBtn.style.zIndex = "99999";
 
-    // Remove transform
+    /*
+       Remove transform
+       taake position calculation correct rahe
+    */
+
     noBtn.style.transform = "none";
 
-    // Button dimensions
-    const width = noBtn.offsetWidth;
-    const height = noBtn.offsetHeight;
 
-    // Screen boundaries
-    const minX = padding;
-    const minY = padding;
+    /*
+       Button dimensions
+    */
 
-    const maxX = Math.max(
-        minX,
-        window.innerWidth - width - padding
-    );
+    const width =
+        noBtn.offsetWidth;
 
-    const maxY = Math.max(
-        minY,
-        window.innerHeight - height - padding
-    );
+    const height =
+        noBtn.offsetHeight;
 
-    // Random position
-    const x =
-        minX + Math.random() * (maxX - minX);
 
-    const y =
-        minY + Math.random() * (maxY - minY);
+    /*
+       Current position
+    */
 
-    // Apply position
-    noBtn.style.left = `${x}px`;
-    noBtn.style.top = `${y}px`;
+    const rect =
+        noBtn.getBoundingClientRect();
+
+    let currentX =
+        rect.left;
+
+    let currentY =
+        rect.top;
+
+
+    /*
+       Screen boundaries
+    */
+
+    const minX =
+        padding;
+
+    const minY =
+        padding;
+
+    const maxX =
+        Math.max(
+            minX,
+            window.innerWidth -
+            width -
+            padding
+        );
+
+    const maxY =
+        Math.max(
+            minY,
+            window.innerHeight -
+            height -
+            padding
+        );
+
+
+    /*
+       Movement distance
+    */
+
+    const moveDistanceX =
+        120 + Math.random() * 180;
+
+    const moveDistanceY =
+        100 + Math.random() * 160;
+
+
+    /*
+       Random direction
+    */
+
+    let directionX =
+        Math.random() > 0.5 ? 1 : -1;
+
+    let directionY =
+        Math.random() > 0.5 ? 1 : -1;
+
+
+    /*
+       New position
+    */
+
+    let newX =
+        currentX +
+        moveDistanceX *
+        directionX;
+
+    let newY =
+        currentY +
+        moveDistanceY *
+        directionY;
+
+
+    /*
+       If X goes outside,
+       reverse direction
+    */
+
+    if (newX > maxX) {
+
+        newX =
+            currentX -
+            moveDistanceX;
+
+    }
+
+    if (newX < minX) {
+
+        newX =
+            currentX +
+            moveDistanceX;
+
+    }
+
+
+    /*
+       If Y goes outside,
+       reverse direction
+    */
+
+    if (newY > maxY) {
+
+        newY =
+            currentY -
+            moveDistanceY;
+
+    }
+
+    if (newY < minY) {
+
+        newY =
+            currentY +
+            moveDistanceY;
+
+    }
+
+
+    /*
+       Final safety clamp
+    */
+
+    newX =
+        Math.max(
+            minX,
+            Math.min(
+                newX,
+                maxX
+            )
+        );
+
+
+    newY =
+        Math.max(
+            minY,
+            Math.min(
+                newY,
+                maxY
+            )
+        );
+
+
+    /*
+       Apply position
+    */
+
+    noBtn.style.left =
+        `${newX}px`;
+
+    noBtn.style.top =
+        `${newY}px`;
+
+
+    /*
+       Escape counter
+    */
 
     escaped++;
 
-    // Hint messages
+
+    /*
+       Change hint
+    */
+
     if (escaped === 1) {
-        hint.textContent = "Haha, nice try! 😏";
+
+        hint.textContent =
+            "Haha, nice try! 😏";
+
     }
 
     if (escaped === 3) {
-        hint.textContent = "The No button is getting shy... 🙈";
+
+        hint.textContent =
+            "The No button is getting shy... 🙈";
+
     }
 
     if (escaped >= 5) {
-        hint.textContent = "Okay okay... maybe Yes is easier? 😂❤️";
+
+        hint.textContent =
+            "Okay okay... maybe Yes is easier? 😂❤️";
+
     }
 
-    // IMPORTANT:
-    // Cursor detection ko thori der rok do
+
+    /*
+       Small cooldown
+    */
+
     setTimeout(() => {
+
         isMoving = false;
-    }, 500);
+
+    }, 400);
+
 }
 
 
 /* =========================
-   DESKTOP HOVER
+   DESKTOP CURSOR DETECTION
 ========================= */
 
-document.addEventListener("mousemove", function (event) {
+document.addEventListener(
+    "mousemove",
+    function (event) {
 
-    if (isMoving) return;
+        if (isMoving) return;
 
-    const rect = noBtn.getBoundingClientRect();
+        const rect =
+            noBtn.getBoundingClientRect();
 
-    /*
-       Check cursor directly over button
-       OR very close to it.
-    */
 
-    const insideButton =
-        event.clientX >= rect.left &&
-        event.clientX <= rect.right &&
-        event.clientY >= rect.top &&
-        event.clientY <= rect.bottom;
+        const centerX =
+            rect.left +
+            rect.width / 2;
 
-    const centerX =
-        rect.left + rect.width / 2;
+        const centerY =
+            rect.top +
+            rect.height / 2;
 
-    const centerY =
-        rect.top + rect.height / 2;
 
-    const dx =
-        event.clientX - centerX;
+        const distanceX =
+            event.clientX -
+            centerX;
 
-    const dy =
-        event.clientY - centerY;
+        const distanceY =
+            event.clientY -
+            centerY;
 
-    const distance =
-        Math.sqrt(dx * dx + dy * dy);
 
-    /*
-       Only move when cursor actually
-       reaches / gets very close.
-    */
+        const distance =
+            Math.sqrt(
+                distanceX * distanceX +
+                distanceY * distanceY
+            );
 
-    if (
-        insideButton ||
-        distance < 70
-    ) {
-        moveNoButton();
+
+        /*
+           Cursor button ke qareeb aaye
+        */
+
+        if (distance < 90) {
+
+            moveNoButton();
+
+        }
+
     }
-
-});
+);
 
 
 /* =========================
@@ -158,139 +331,207 @@ noBtn.addEventListener(
    YES BUTTON
 ========================= */
 
-yesBtn.addEventListener("click", function () {
+yesBtn.addEventListener(
+    "click",
+    function () {
 
-    success.classList.add("show");
+        success.classList.add("show");
 
-    createBurst();
+        createBurst();
 
-    // Today's date
-    const today = new Date();
 
-    const year =
-        today.getFullYear();
+        /*
+           Minimum date = today
+        */
 
-    const month =
-        String(today.getMonth() + 1)
-            .padStart(2, "0");
+        const today =
+            new Date();
 
-    const day =
-        String(today.getDate())
-            .padStart(2, "0");
 
-    const todayString =
-        `${year}-${month}-${day}`;
+        const year =
+            today.getFullYear();
 
-    dateInput.min = todayString;
 
-});
+        const month =
+            String(
+                today.getMonth() + 1
+            ).padStart(2, "0");
+
+
+        const day =
+            String(
+                today.getDate()
+            ).padStart(2, "0");
+
+
+        const todayString =
+            `${year}-${month}-${day}`;
+
+
+        dateInput.min =
+            todayString;
+
+    }
+);
 
 
 /* =========================
    CONFIRM DATE + TIME
 ========================= */
 
-confirmBtn.addEventListener("click", function () {
+confirmBtn.addEventListener(
+    "click",
+    function () {
 
-    const selectedDate =
-        dateInput.value;
+        const selectedDate =
+            dateInput.value;
 
-    const selectedTime =
-        timeInput.value;
-
-
-    if (!selectedDate) {
-
-        formMessage.textContent =
-            "Please choose a date ❤️";
-
-        formMessage.className =
-            "form-message error";
-
-        return;
-    }
+        const selectedTime =
+            timeInput.value;
 
 
-    if (!selectedTime) {
+        /*
+           Date validation
+        */
 
-        formMessage.textContent =
-            "Please choose a time 🕐";
+        if (!selectedDate) {
 
-        formMessage.className =
-            "form-message error";
+            formMessage.textContent =
+                "Please choose a date ❤️";
 
-        return;
-    }
+            formMessage.className =
+                "form-message error";
 
+            return;
 
-    confirmBtn.disabled = true;
-
-    confirmBtn.textContent =
-        "Saving... 💕";
-
-
-    const timezone =
-        Intl.DateTimeFormat()
-            .resolvedOptions()
-            .timeZone;
+        }
 
 
-    const data = {
+        /*
+           Time validation
+        */
 
-        answer: "YES",
-        date: selectedDate,
-        time: selectedTime,
-        timezone: timezone
+        if (!selectedTime) {
 
-    };
+            formMessage.textContent =
+                "Please choose a time 🕐";
+
+            formMessage.className =
+                "form-message error";
+
+            return;
+
+        }
 
 
-    fetch(GOOGLE_SCRIPT_URL, {
+        /*
+           Disable button
+        */
 
-        method: "POST",
-        mode: "no-cors",
-        body: JSON.stringify(data)
-
-    })
-
-    .then(() => {
-
-        formMessage.textContent =
-            "It's a date! 💖 See you then! ✨";
-
-        formMessage.className =
-            "form-message success";
+        confirmBtn.disabled =
+            true;
 
         confirmBtn.textContent =
-            "Confirmed ❤️";
+            "Saving... 💕";
 
 
-        setTimeout(() => {
+        /*
+           Timezone
+        */
 
-            success.classList.remove("show");
+        const timezone =
+            Intl.DateTimeFormat()
+                .resolvedOptions()
+                .timeZone;
 
-        }, 2500);
 
-    })
+        /*
+           Data
+        */
 
-    .catch((error) => {
+        const data = {
 
-        console.error(error);
+            answer: "YES",
 
-        formMessage.textContent =
-            "Something went wrong. Please try again.";
+            date: selectedDate,
 
-        formMessage.className =
-            "form-message error";
+            time: selectedTime,
 
-        confirmBtn.disabled = false;
+            timezone: timezone
 
-        confirmBtn.textContent =
-            "Confirm Date 💕";
+        };
 
-    });
 
-});
+        /*
+           Send to Google Script
+        */
+
+        fetch(
+            GOOGLE_SCRIPT_URL,
+            {
+
+                method: "POST",
+
+                mode: "no-cors",
+
+                body:
+                    JSON.stringify(data)
+
+            }
+        )
+
+        .then(() => {
+
+            formMessage.textContent =
+                "It's a date! 💖 See you then! ✨";
+
+
+            formMessage.className =
+                "form-message success";
+
+
+            confirmBtn.textContent =
+                "Confirmed ❤️";
+
+
+            /*
+               Close popup
+            */
+
+            setTimeout(() => {
+
+                success.classList.remove(
+                    "show"
+                );
+
+            }, 2500);
+
+        })
+
+        .catch((error) => {
+
+            console.error(error);
+
+
+            formMessage.textContent =
+                "Something went wrong. Please try again.";
+
+
+            formMessage.className =
+                "form-message error";
+
+
+            confirmBtn.disabled =
+                false;
+
+
+            confirmBtn.textContent =
+                "Confirm Date 💕";
+
+        });
+
+    }
+);
 
 
 /* =========================
@@ -302,15 +543,19 @@ function createHeart() {
     const heart =
         document.createElement("span");
 
-    heart.className = "heart";
+
+    heart.className =
+        "heart";
 
 
     const heartTypes = [
+
         "♥",
         "♡",
         "💗",
         "💕",
         "💖"
+
     ];
 
 
@@ -323,13 +568,25 @@ function createHeart() {
         ];
 
 
+    /*
+       Random horizontal position
+    */
+
     heart.style.left =
         `${Math.random() * 100}%`;
 
 
+    /*
+       Random size
+    */
+
     heart.style.fontSize =
         `${14 + Math.random() * 22}px`;
 
+
+    /*
+       Random speed
+    */
 
     heart.style.animationDuration =
         `${5 + Math.random() * 5}s`;
@@ -340,6 +597,10 @@ function createHeart() {
         .appendChild(heart);
 
 
+    /*
+       Remove after animation
+    */
+
     setTimeout(() => {
 
         heart.remove();
@@ -348,6 +609,10 @@ function createHeart() {
 
 }
 
+
+/* =========================
+   CREATE HEARTS
+========================= */
 
 setInterval(
     createHeart,
@@ -392,6 +657,7 @@ window.addEventListener(
             return;
         }
 
+
         const padding = 25;
 
         const width =
@@ -402,37 +668,61 @@ window.addEventListener(
 
 
         let x =
-            parseFloat(noBtn.style.left) || padding;
+            parseFloat(
+                noBtn.style.left
+            ) || padding;
+
 
         let y =
-            parseFloat(noBtn.style.top) || padding;
+            parseFloat(
+                noBtn.style.top
+            ) || padding;
 
 
-        const maxX = Math.max(
-            padding,
-            window.innerWidth -
-            width -
-            padding
-        );
-
-        const maxY = Math.max(
-            padding,
-            window.innerHeight -
-            height -
-            padding
-        );
+        const maxX =
+            Math.max(
+                padding,
+                window.innerWidth -
+                width -
+                padding
+            );
 
 
-        x = Math.max(
-            padding,
-            Math.min(x, maxX)
-        );
+        const maxY =
+            Math.max(
+                padding,
+                window.innerHeight -
+                height -
+                padding
+            );
 
 
-        y = Math.max(
-            padding,
-            Math.min(y, maxY)
-        );
+        /*
+           Keep X inside
+        */
+
+        x =
+            Math.max(
+                padding,
+                Math.min(
+                    x,
+                    maxX
+                )
+            );
+
+
+        /*
+           Keep Y inside
+        */
+
+        y =
+            Math.max(
+                padding,
+                Math.min(
+                    y,
+                    maxY
+                )
+            );
 
 
         noBtn.style.left =
