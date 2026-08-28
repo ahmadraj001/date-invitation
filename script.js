@@ -1,6 +1,5 @@
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzl6ye9P7CvKDun34QXYvk55hIaMwGKTG6aK55BFBvBFejOVsaLPZEgP35NPGGhHXIcQw/exec";
 
-
 const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
 const success = document.getElementById("success");
@@ -16,10 +15,9 @@ let isMoving = false;
 
 /* =========================
    MOVE NO BUTTON
-   CURSOR KI OPPOSITE DIRECTION
 ========================= */
 
-function moveNoButton(mouseX, mouseY) {
+function moveNoButton() {
 
     if (isMoving) return;
 
@@ -27,204 +25,64 @@ function moveNoButton(mouseX, mouseY) {
 
     const padding = 20;
 
-    /* Make button fixed */
+    /* Fixed position */
     noBtn.style.position = "fixed";
     noBtn.style.zIndex = "99999";
+
+    /* Remove transform */
     noBtn.style.transform = "none";
 
-    /* Actual button size */
+    /* Button size */
     const width = noBtn.offsetWidth;
     const height = noBtn.offsetHeight;
 
-    /* Current position */
-    const rect = noBtn.getBoundingClientRect();
+    /* Viewport size */
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
 
-    let currentX = rect.left;
-    let currentY = rect.top;
-
-    /* Button center */
-    const centerX = currentX + width / 2;
-    const centerY = currentY + height / 2;
+    /* Safe maximum positions */
+    const maxX = viewportWidth - width - padding;
+    const maxY = viewportHeight - height - padding;
 
     /*
-       Cursor kis side par hai?
+       Completely random position
+       BUT inside viewport
     */
 
-    const fromLeft = mouseX < centerX;
-    const fromRight = mouseX > centerX;
-    const fromTop = mouseY < centerY;
-    const fromBottom = mouseY > centerY;
+    let x =
+        padding +
+        Math.random() *
+        (maxX - padding);
+
+    let y =
+        padding +
+        Math.random() *
+        (maxY - padding);
 
 
-    /*
-       Movement distance
-    */
+    /* Safety */
 
-    const horizontalDistance =
-        140 + Math.random() * 100;
-
-    const verticalDistance =
-        110 + Math.random() * 90;
-
-
-    let newX = currentX;
-    let newY = currentY;
-
-
-    /*
-       CURSOR LEFT SIDE PAR HAI
-       => BUTTON RIGHT JAYEGA
-
-       CURSOR RIGHT SIDE PAR HAI
-       => BUTTON LEFT JAYEGA
-    */
-
-    if (fromLeft) {
-
-        newX =
-            currentX +
-            horizontalDistance;
-
-    } else {
-
-        newX =
-            currentX -
-            horizontalDistance;
-
-    }
-
-
-    /*
-       CURSOR TOP PAR HAI
-       => BUTTON DOWN JAYEGA
-
-       CURSOR BOTTOM PAR HAI
-       => BUTTON UP JAYEGA
-    */
-
-    if (fromTop) {
-
-        newY =
-            currentY +
-            verticalDistance;
-
-    } else {
-
-        newY =
-            currentY -
-            verticalDistance;
-
-    }
-
-
-    /*
-       SCREEN BOUNDARIES
-    */
-
-    const minX = padding;
-    const minY = padding;
-
-    const maxX =
-        window.innerWidth -
-        width -
-        padding;
-
-    const maxY =
-        window.innerHeight -
-        height -
-        padding;
-
-
-    /*
-       Agar right boundary aa gayi
-       to LEFT side move karo
-    */
-
-    if (newX > maxX) {
-
-        newX =
-            currentX -
-            horizontalDistance;
-
-    }
-
-
-    /*
-       Agar left boundary aa gayi
-       to RIGHT side move karo
-    */
-
-    if (newX < minX) {
-
-        newX =
-            currentX +
-            horizontalDistance;
-
-    }
-
-
-    /*
-       Agar bottom boundary aa gayi
-       to UP move karo
-    */
-
-    if (newY > maxY) {
-
-        newY =
-            currentY -
-            verticalDistance;
-
-    }
-
-
-    /*
-       Agar top boundary aa gayi
-       to DOWN move karo
-    */
-
-    if (newY < minY) {
-
-        newY =
-            currentY +
-            verticalDistance;
-
-    }
-
-
-    /*
-       FINAL SAFETY CLAMP
-
-       Button kisi bhi situation mein
-       viewport se bahar nahi ja sakta.
-    */
-
-    newX = Math.max(
-        minX,
-        Math.min(newX, maxX)
+    x = Math.max(
+        padding,
+        Math.min(x, maxX)
     );
 
-    newY = Math.max(
-        minY,
-        Math.min(newY, maxY)
+    y = Math.max(
+        padding,
+        Math.min(y, maxY)
     );
 
 
-    /*
-       Apply position
-    */
+    /* Move */
 
-    noBtn.style.left =
-        `${newX}px`;
-
-    noBtn.style.top =
-        `${newY}px`;
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
 
 
-    /* =========================
-       HINT
-    ========================= */
+    /* Counter */
 
     escaped++;
+
 
     if (escaped === 1) {
 
@@ -248,9 +106,7 @@ function moveNoButton(mouseX, mouseY) {
     }
 
 
-    /*
-       Prevent repeated movement
-    */
+    /* Cooldown */
 
     setTimeout(() => {
 
@@ -261,55 +117,22 @@ function moveNoButton(mouseX, mouseY) {
 
 
 /* =========================
-   DESKTOP MOUSE
+   DESKTOP
+   HOVER
 ========================= */
 
-document.addEventListener(
-    "mousemove",
-    function (event) {
+noBtn.addEventListener(
+    "mouseenter",
+    function () {
 
-        if (isMoving) return;
-
-        const rect =
-            noBtn.getBoundingClientRect();
-
-
-        /*
-           Extra detection area
-           button ke around
-        */
-
-        const extra = 65;
-
-        const nearButton =
-            event.clientX >=
-                rect.left - extra &&
-
-            event.clientX <=
-                rect.right + extra &&
-
-            event.clientY >=
-                rect.top - extra &&
-
-            event.clientY <=
-                rect.bottom + extra;
-
-
-        if (nearButton) {
-
-            moveNoButton(
-                event.clientX,
-                event.clientY
-            );
-
-        }
+        moveNoButton();
 
     }
 );
 
 
 /* =========================
-   MOBILE TOUCH
+   MOBILE
 ========================= */
 
 noBtn.addEventListener(
@@ -318,13 +141,7 @@ noBtn.addEventListener(
 
         event.preventDefault();
 
-        const touch =
-            event.touches[0];
-
-        moveNoButton(
-            touch.clientX,
-            touch.clientY
-        );
+        moveNoButton();
 
     },
     {
@@ -413,8 +230,7 @@ confirmBtn.addEventListener(
         }
 
 
-        confirmBtn.disabled =
-            true;
+        confirmBtn.disabled = true;
 
         confirmBtn.textContent =
             "Saving... 💕";
@@ -429,8 +245,11 @@ confirmBtn.addEventListener(
         const data = {
 
             answer: "YES",
+
             date: selectedDate,
+
             time: selectedTime,
+
             timezone: timezone
 
         };
@@ -542,9 +361,12 @@ function createHeart() {
         heart.remove();
 
     }, 11000);
-
 }
 
+
+/* =========================
+   HEARTS
+========================= */
 
 setInterval(
     createHeart,
@@ -577,7 +399,6 @@ function createBurst() {
 
 /* =========================
    KEEP BUTTON INSIDE
-   AFTER RESIZE
 ========================= */
 
 window.addEventListener(
@@ -601,21 +422,14 @@ window.addEventListener(
 
 
         const maxX =
-            Math.max(
-                padding,
-                window.innerWidth -
-                width -
-                padding
-            );
-
+            window.innerWidth -
+            width -
+            padding;
 
         const maxY =
-            Math.max(
-                padding,
-                window.innerHeight -
-                height -
-                padding
-            );
+            window.innerHeight -
+            height -
+            padding;
 
 
         let x =
@@ -623,32 +437,29 @@ window.addEventListener(
                 noBtn.style.left
             ) || padding;
 
-
         let y =
             parseFloat(
                 noBtn.style.top
             ) || padding;
 
 
-        x =
-            Math.max(
-                padding,
-                Math.min(x, maxX)
-            );
+        x = Math.max(
+            padding,
+            Math.min(x, maxX)
+        );
 
 
-        y =
-            Math.max(
-                padding,
-                Math.min(y, maxY)
-            );
+        y = Math.max(
+            padding,
+            Math.min(y, maxY)
+        );
 
 
         noBtn.style.left =
-            `${x}px`;
+            x + "px";
 
         noBtn.style.top =
-            `${y}px`;
+            y + "px";
 
     }
 );
