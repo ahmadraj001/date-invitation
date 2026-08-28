@@ -499,3 +499,22 @@ h1 {
 
     font-weight: bold;
 }
+
+/* Creator Credit */
+.creator-credit {
+    position: fixed;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    
+    margin: 0;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    
+    color: rgba(255, 255, 255, 0.55);
+    text-align: center;
+    
+    z-index: 20;
+    pointer-events: none;
+}
